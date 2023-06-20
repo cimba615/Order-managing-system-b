@@ -7,15 +7,15 @@ require("dotenv").config({ path: ".variables.env" });
 exports.create = async (req, res) => {
   try {
 
-    let { number, name, mobile, email, phone, country, state, city, postcode, address } = req.body;
+    let { name, mobile, email, phone, country, state, city, postcode, address } = req.body;
 
     const allSuppliers = await Suppliers.find();
-    // const number = allSuppliers.length+1;
+    const number = allSuppliers.length + 1;
     const altnum = number;
 
     const newSuppliers = new Suppliers({
       number,
-      altnum: number,
+      altnum,
       name,
       mobile,
       email,
@@ -64,9 +64,8 @@ exports.list = async (req, res) => {
 exports.delete = async (req, res) => {
   try {
     const id = req.params.id;
-
     const number = await Suppliers.findOne({ _id: id });
-    const Suppliers = await Suppliers.find();
+    const suppliers = await Suppliers.find();
 
     const i = number.number;
 
@@ -77,6 +76,24 @@ exports.delete = async (req, res) => {
         message: "It doesn't exist."
       });
 
+    for (j = i + 1; j <= suppliers.length; j++) {
+      const changenumber = await Suppliers.findOneAndUpdate(
+        { altnum: j },
+        { number: j - 1 },
+        {
+          new: true
+        }
+      );
+    }
+    for (j = i; j < suppliers.length; j++) {
+      const changealtnum = await Suppliers.findOneAndUpdate(
+        { number: j },
+        { altnum: j },
+        {
+          new: true
+        }
+      );
+    }
     const newSuppliers = await Suppliers.find();
 
     return res.status(200).json({
@@ -110,17 +127,15 @@ exports.update = async (req, res) => {
 
   try {
 
-    let { id, number, name, mobile, email, phone, country, state, city, postcode, address } = req.body;
+    let { id, name, mobile, email, phone, country, state, city, postcode, address } = req.body;
 
-    if (!id || !number || !name || !mobile || !email || !phone || !country || !state || !city || !postcode || !address)
+    if (!id || !name || !mobile || !email || !phone || !country || !state || !city || !postcode || !address)
       return res.status(200).json({ success: false, message: "Not all fields have been entered." });
 
     const before = await Suppliers.findOne({ _id: id });
     const updateData = await Suppliers.findOneAndUpdate(
       { _id: id },
       {
-        number,
-        altnum: number,
         name,
         mobile,
         email,
