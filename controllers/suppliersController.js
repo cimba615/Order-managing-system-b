@@ -15,7 +15,7 @@ exports.create = async (req, res) => {
 
     const newSuppliers = new Suppliers({
       number,
-      altnum,
+      altnum: number,
       name,
       mobile,
       email,
