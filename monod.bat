@@ -1,0 +1,1 @@
+"C:\Program Files\MongoDB\Server\5.0\bin\mongod.exe"  -dbpath "F:\TASK\9.14_product_partner\backend\data\mongod data"
